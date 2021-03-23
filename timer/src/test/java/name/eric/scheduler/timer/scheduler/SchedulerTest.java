@@ -40,7 +40,7 @@ class SchedulerTest {
 
         when(repository.findByStartAtAndStatus(any(String.class), eq(Status.TODO)))
                 .thenReturn(List.of(prepareTask()));
-        when(mongoTemplate.findAndModify(any(Query.class),any(Update.class),any(FindAndModifyOptions.class),any(Class.class)))
+        when(mongoTemplate.findAndModify(any(Query.class), any(Update.class), any(FindAndModifyOptions.class), any(Class.class)))
                 .thenReturn(prepareTask());
 
         // when

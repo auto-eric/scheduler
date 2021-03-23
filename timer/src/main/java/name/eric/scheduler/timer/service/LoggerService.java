@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,10 +18,13 @@ public class LoggerService {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    @Value("${scheduler.logger.url}")
+    private String uri = "";
+
     public void log(String message) {
         log.debug("send message: {}", message);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost request = new HttpPost("http://localhost:8090/logger");
+            HttpPost request = new HttpPost(uri);
             request.setHeader("Content-Type", "application/json");
             LogDto value = new LogDto();
             value.setMessage(message);

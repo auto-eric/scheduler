@@ -1,1 +1,4 @@
 spring.data.mongodb.uri: mongodb://localhost:27017/SchedulingDb
+
+scheduler:
+  logger.url: http://localhost:8090/logger

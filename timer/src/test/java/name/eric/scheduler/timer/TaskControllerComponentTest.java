@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,9 +75,34 @@ public class TaskControllerComponentTest {
             .post(url )
             .prettyPeek()
         .then()
-            .statusCode(HttpStatus.OK.value());
+            .statusCode(HttpStatus.OK.value())
+            .body("id", notNullValue())
+            .body("time", equalTo(taskCreateDto.getTime()))
+            .body("message", equalTo(taskCreateDto.getMessage()))
+        ;
         //@formatter:on
 
         Assertions.assertEquals(2, repo.count());
+    }
+
+    @Test
+    public void testPost_validation() {
+        TaskCreateDto taskCreateDto = new TaskCreateDto();
+        taskCreateDto.setTime("29:00");
+
+        //@formatter:off
+        given()
+            .header(new Header("Content-Type", ContentType.JSON.toString()))
+            .body(taskCreateDto)
+            .log().all()
+        .when()
+            .post(url )
+            .prettyPeek()
+        .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("errors.size()",equalTo(2));
+        //@formatter:on
+
+        Assertions.assertEquals(1, repo.count());
     }
 }
